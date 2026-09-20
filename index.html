@@ -141,8 +141,8 @@
 
 <div class="wrap">
   <header class="page">
-    <span class="eyebrow" id="eyebrow">Usados · Embudo Forum</span>
-    <h1>Clasificación de cotizaciones por zona</h1>
+    <span class="eyebrow" id="eyebrow">Usados · Embudo Financiamiento · Venta</span>
+    <h1>Usados - F&amp;I</h1>
     <p class="subtitle">Cantidad = tamaño de la base de origen (Lead / Renovaciones / ASC). Cotización = cotizaciones del Embudo Forum clasificadas en esa categoría. Más abajo, la misma clasificación aplicada a las Ventas. Solo se incluyen zonas con sucursal homologada.</p>
     <div class="flow">
       <span>Prioridad de clasificación:</span>
@@ -171,7 +171,7 @@
 
   <div class="card">
     <div class="card-head">
-      <h2>Clasificación por zona</h2>
+      <h2>Clasificación Cotizaciones de Financiamiento</h2>
       <span class="hint">Clic en ▸ para desglosar por sucursal y vendedor · primera columna fija</span>
     </div>
     <div class="tablescroll">
@@ -205,13 +205,13 @@
 
   <div class="card">
     <div class="card-head">
-      <h2>Clasificación de Venta por zona</h2>
+      <h2>Clasificación de Venta</h2>
       <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
-        <span class="hint">Ventas (hoja 'Venta') clasificadas con la misma prioridad Lead → Renovaciones → ASC → Otros · usa los filtros de Mes/Zona/Sucursal de arriba</span>
         <div class="filter" style="min-width:130px;flex:0 0 auto;">
           <label for="f-tipo-venta">Flota / Retail</label>
           <select id="f-tipo-venta"></select>
         </div>
+        <button class="reset-btn" id="f-reset-venta" type="button" style="align-self:flex-end;">Limpiar filtro</button>
       </div>
     </div>
     <div class="tablescroll">
@@ -450,6 +450,7 @@ const $zona = document.getElementById('f-zona');
 const $sucursal = document.getElementById('f-sucursal');
 const $reset = document.getElementById('f-reset');
 const $tipoVenta = document.getElementById('f-tipo-venta');
+const $resetVenta = document.getElementById('f-reset-venta');
 
 $mes.innerHTML = periodos.map(p => `<option value="${p}">${periodoLabel(p)}</option>`).join('');
 $mes.value = state.mes;
@@ -556,7 +557,7 @@ function render(){
   }
 
   document.getElementById('tbody').innerHTML = html;
-  document.getElementById('eyebrow').textContent = `Usados · Embudo Forum · ${periodoLabel(state.mes)}`;
+  document.getElementById('eyebrow').textContent = `Usados · Embudo Financiamiento · Venta`;
   renderVenta();
 }
 
@@ -580,6 +581,9 @@ $mes.addEventListener('change', () => { state.mes = $mes.value; state.expanded.c
 $zona.addEventListener('change', () => { state.zona = $zona.value; state.sucursal = ALL; state.expanded.clear(); state.expandedVenta.clear(); render(); });
 $sucursal.addEventListener('change', () => { state.sucursal = $sucursal.value; render(); });
 $tipoVenta.addEventListener('change', () => { state.tipoVenta = $tipoVenta.value; renderVenta(); });
+$resetVenta.addEventListener('click', () => {
+  state.tipoVenta = ALL; $tipoVenta.value = ALL; state.expandedVenta.clear(); renderVenta();
+});
 $reset.addEventListener('click', () => {
   state.zona = ALL; state.sucursal = ALL; state.expanded.clear(); state.expandedVenta.clear(); render();
 });
