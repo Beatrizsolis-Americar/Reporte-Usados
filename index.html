@@ -193,7 +193,6 @@
   }
 
   #tbl{min-width:2150px;}
-  #tbl-venta{min-width:1420px;}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -202,7 +201,7 @@
   <header class="page">
     <span class="eyebrow" id="eyebrow">Usados · Embudo Financiamiento · Venta</span>
     <h1>Funnel Usados</h1>
-    <p class="subtitle">Cantidad = tamaño de la base de origen (Lead / Renovaciones / ASC). Cotización = cotizaciones del Embudo Forum clasificadas en esa categoría. Más abajo, la misma clasificación aplicada a las Ventas. Solo se incluyen zonas con sucursal homologada.</p>
+    <p class="subtitle">Cantidad = tamaño de la base de origen (Lead / Renovaciones / ASC). Cotización = cotizaciones del Embudo Forum clasificadas en esa categoría. Venta = ventas con esa misma clasificación. Solo se incluyen zonas con sucursal homologada.</p>
     <div class="flow">
       <span>Prioridad de clasificación:</span>
       <span class="tag">Lead</span><span class="arrow">→</span>
@@ -258,58 +257,13 @@
       <summary>Ver definiciones de columnas</summary>
       <div class="legend-note">
         <b>Cot/Leads, Cot/Renov, %Cot/ASC</b> = Cotización ÷ Cantidad de esa misma categoría.
-        <b>Venta</b> = ventas de esa categoría (de la tabla Cierre por Canal, misma clasificación); respeta el filtro Flota/Retail de esa tabla.
+        <b>Venta</b> = ventas de esa categoría (misma clasificación Lead/Renovaciones/ASC/Otros que Cotización); respeta el filtro Flota/Retail de arriba.
         <b>% Cierre</b> = Venta ÷ Cantidad de esa misma categoría (no aplica a Otros, que no tiene Cantidad).
         <b>% MS Cot</b> = participación de esa categoría sobre el total de cotizaciones de TODOS los canales (incluye Otros) del mismo nivel (zona, sucursal o vendedor).
         <b>Total &gt; Cotización</b> = suma de Cotización de Lead + Renovaciones + ASC de ese nivel (no incluye Otros).
         <b>%Cot/Cant</b> (columna Total) = Cotización total (Lead+Renovaciones+ASC) ÷ Cantidad total (Lead+Renovaciones+ASC) de ese nivel.
         <b>Total &gt; Venta / % Cierre</b> = misma suma (Lead+Renovaciones+ASC, no incluye Otros).
-        <b>Filtro Canal</b> = muestra u oculta las columnas de cada canal en esta tabla (se puede elegir mas de uno); no afecta los datos ni el filtro de la tabla Cierre por Canal. Al filtrar por Canal, la columna Total se oculta (deja de ser la suma de todos los canales).
-      </div>
-    </details>
-  </div>
-
-  <div class="card">
-    <div class="card-head">
-      <h2>Cierre por Canal</h2>
-      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
-        <div class="filter" style="min-width:130px;flex:0 0 auto;">
-          <label for="f-tipo-venta">Flota / Retail</label>
-          <select id="f-tipo-venta"></select>
-        </div>
-        <button class="reset-btn" id="f-reset-venta" type="button" style="align-self:flex-end;">Limpiar filtro</button>
-      </div>
-    </div>
-    <div class="tablescroll">
-      <table id="tbl-venta" aria-label="Clasificacion de ventas por zona, sucursal y vendedor">
-        <thead>
-          <tr class="group-row">
-            <th class="zona-head" rowspan="2">Zona / Sucursal / Vendedor</th>
-            <th colspan="4" class="g-lead grp-b-lead">Lead</th>
-            <th colspan="4" class="g-renov grp-b-renov">Renovaciones</th>
-            <th colspan="4" class="g-asc grp-b-asc">ASC</th>
-            <th colspan="2" class="g-otros grp-b-otros">Otros Canales</th>
-            <th colspan="3" class="g-total grp-b-total">Total</th>
-          </tr>
-          <tr class="metric-row">
-            <th class="g-lead grp-b-lead">Cantidad</th><th class="g-lead">Venta</th><th class="g-lead">% Tasa Cierre</th><th class="g-lead">% MS Venta</th>
-            <th class="g-renov grp-b-renov">Cantidad</th><th class="g-renov">Venta</th><th class="g-renov">% Tasa Cierre</th><th class="g-renov">% MS Venta</th>
-            <th class="g-asc grp-b-asc">Cantidad</th><th class="g-asc">Venta</th><th class="g-asc">% Tasa Cierre</th><th class="g-asc">% MS Venta</th>
-            <th class="g-otros grp-b-otros">Venta</th><th class="g-otros">% MS Venta</th>
-            <th class="g-total grp-b-total">Cantidad</th><th class="g-total">Venta</th><th class="g-total">% Tasa Cierre</th>
-          </tr>
-        </thead>
-        <tbody id="tbody-venta"></tbody>
-      </table>
-    </div>
-    <details class="legend-details">
-      <summary>Ver definiciones de columnas</summary>
-      <div class="legend-note">
-        <b>Cantidad</b> (Lead / Renovaciones / ASC) = tamaño de la base de origen de esa categoría, igual que en la tabla de Funnel.
-        <b>Venta</b> = cantidad de ventas clasificadas en esa categoría (Lead / Renovaciones / ASC / Otros).
-        <b>% Tasa Cierre</b> = Venta ÷ Cantidad de esa misma categoría (tasa de cierre: cuánto de esa base se convirtió en venta). No aplica a Otros (no tiene Cantidad). En la columna Total = Venta (Lead+Renovaciones+ASC, no incluye Otros) ÷ Cantidad total.
-        <b>% MS Venta</b> = participación de la Venta de esa categoría sobre el total de ventas de TODOS los canales (incluye Otros) de esa misma fila (zona, sucursal o vendedor).
-        <b>Total</b> = Venta: total de ventas de esa fila (Lead + Renovaciones + ASC + Otros). Cantidad: suma de Lead + Renovaciones + ASC.
+        <b>Filtro Canal</b> = muestra u oculta las columnas de cada canal en esta tabla (se puede elegir mas de uno). Al filtrar por Canal, la columna Total se oculta (deja de ser la suma de todos los canales).
       </div>
     </details>
   </div>
@@ -381,8 +335,8 @@ function buildTree(periodosSel, tipoVenta){
       const vN = node(sN.children, r.v || 'Sin vendedor');
       zN.agg[field] += r.n; sN.agg[field] += r.n; vN.agg[field] += r.n;
     });
-    // Venta: mismo dato que la tabla Cierre por Canal (respeta el filtro Flota/Retail),
-    // se incorpora aca para mostrar Venta y % Tasa Cierre en la tabla Funnel.
+    // Venta: respeta el filtro Flota/Retail; se incorpora aca para mostrar
+    // Venta y % Cierre en la tabla Funnel.
     (data.venta || []).forEach(r => {
       if (tipoVenta && tipoVenta !== ALL && r.t !== tipoVenta) return;
       const field = VENTA_FIELD[r.c];
@@ -433,147 +387,6 @@ function sortedKeys(childrenObj){
   });
 }
 
-// ---- tabla de Venta (misma estructura de arbol Zona/Sucursal/Vendedor, pero
-// a partir de data.venta: cuenta de ventas por clasificacion Lead/Renovaciones/ASC/Otros) ----
-const emptyVentaAgg = () => ({leadC:0, renovC:0, ascC:0, leadN:0, renovN:0, ascN:0, otrosN:0});
-
-function buildVentaTree(periodosSel, tipoVenta){
-  const root = {};
-  function node(parent, key){
-    if (!(key in parent)) parent[key] = {agg: emptyVentaAgg(), children: {}};
-    return parent[key];
-  }
-  periodosSel.forEach(periodo => {
-    const data = HISTORIAL[periodo] || {venta: [], cantidad: []};
-    (data.cantidad || []).forEach(r => {
-      const field = CANAL_CANT_FIELD[r.c];
-      if (!field) return;
-      const zN = node(root, r.z);
-      const sN = node(zN.children, r.s);
-      zN.agg[field] += r.n; sN.agg[field] += r.n;
-      if (r.v){ const vN = node(sN.children, r.v); vN.agg[field] += r.n; }
-    });
-    (data.venta || []).forEach(r => {
-      if (tipoVenta && tipoVenta !== ALL && r.t !== tipoVenta) return;
-      const field = VENTA_FIELD[r.c];
-      if (!field) return;
-      const zN = node(root, r.z);
-      const sN = node(zN.children, r.s);
-      const vN = node(sN.children, r.v || 'Sin vendedor');
-      zN.agg[field] += r.n; sN.agg[field] += r.n; vN.agg[field] += r.n;
-    });
-  });
-  return root;
-}
-
-function deriveVenta(agg){
-  const totalN = agg.leadN + agg.renovN + agg.ascN + agg.otrosN;
-  const totalC = agg.leadC + agg.renovC + agg.ascC;
-  // totalNSinOtros: Venta de Lead+Renovaciones+ASC (sin Otros), para calcular
-  // el % Tasa Cierre de la columna Total sobre la misma base que Cantidad
-  // (que tampoco incluye Otros); % MS Venta de cada canal sigue usando totalN
-  // (con Otros) como denominador.
-  const totalNSinOtros = agg.leadN + agg.renovN + agg.ascN;
-  return {
-    ...agg, totalN, totalC,
-    leadPct: div(agg.leadN, totalN), renovPct: div(agg.renovN, totalN),
-    ascPct: div(agg.ascN, totalN), otrosPct: div(agg.otrosN, totalN),
-    leadRatio: div(agg.leadN, agg.leadC), renovRatio: div(agg.renovN, agg.renovC), ascRatio: div(agg.ascN, agg.ascC),
-    totalRatio: div(totalNSinOtros, totalC),
-  };
-}
-
-function sumVentaAgg(list){
-  const out = emptyVentaAgg();
-  list.forEach(a => { for (const k in out) out[k] += a[k]; });
-  return out;
-}
-
-function sortedKeysVenta(childrenObj){
-  return Object.keys(childrenObj).sort((a,b) => {
-    const ta = deriveVenta(childrenObj[a].agg).totalN, tb = deriveVenta(childrenObj[b].agg).totalN;
-    return tb - ta || a.localeCompare(b);
-  });
-}
-
-function rowHtmlVenta(level, label, agg, path, hasChildren, zebra){
-  const m = deriveVenta(agg);
-  const expanded = state.expandedVenta.has(path);
-  const toggle = hasChildren
-    ? `<span class="toggle" data-path="${path}">${expanded ? '▾' : '▸'}</span>`
-    : `<span class="toggle leaf">•</span>`;
-  const zebraClass = (level === 0 && zebra) ? ' zebra-a' : '';
-  return `<tr class="lvl${level}${zebraClass}" data-path="${path}">
-    <td class="rowlabel"><span class="label-cell">${toggle}<span>${label}</span></span></td>
-    <td class="grp-b-lead">${fmtInt(m.leadC)}</td><td>${fmtInt(m.leadN)}</td><td class="pct">${fmtPct(m.leadRatio)}</td><td class="pct">${fmtPct(m.leadPct)}</td>
-    <td class="grp-b-renov">${fmtInt(m.renovC)}</td><td>${fmtInt(m.renovN)}</td><td class="pct">${fmtPct(m.renovRatio)}</td><td class="pct">${fmtPct(m.renovPct)}</td>
-    <td class="grp-b-asc">${fmtInt(m.ascC)}</td><td>${fmtInt(m.ascN)}</td><td class="pct">${fmtPct(m.ascRatio)}</td><td class="pct">${fmtPct(m.ascPct)}</td>
-    <td class="grp-b-otros">${fmtInt(m.otrosN)}</td><td class="pct">${fmtPct(m.otrosPct)}</td>
-    <td class="grp-b-total">${fmtInt(m.totalC)}</td><td>${fmtInt(m.totalN)}</td><td class="pct">${fmtPct(m.totalRatio)}</td>
-  </tr>`;
-}
-
-function totalRowHtmlVenta(agg){
-  const m = deriveVenta(agg);
-  return `<tr class="total-row">
-    <td class="rowlabel">TOTAL</td>
-    <td class="grp-b-lead">${fmtInt(m.leadC)}</td><td>${fmtInt(m.leadN)}</td><td class="pct">${fmtPct(m.leadRatio)}</td><td class="pct">${fmtPct(m.leadPct)}</td>
-    <td class="grp-b-renov">${fmtInt(m.renovC)}</td><td>${fmtInt(m.renovN)}</td><td class="pct">${fmtPct(m.renovRatio)}</td><td class="pct">${fmtPct(m.renovPct)}</td>
-    <td class="grp-b-asc">${fmtInt(m.ascC)}</td><td>${fmtInt(m.ascN)}</td><td class="pct">${fmtPct(m.ascRatio)}</td><td class="pct">${fmtPct(m.ascPct)}</td>
-    <td class="grp-b-otros">${fmtInt(m.otrosN)}</td><td class="pct">${fmtPct(m.otrosPct)}</td>
-    <td class="grp-b-total">${fmtInt(m.totalC)}</td><td>${fmtInt(m.totalN)}</td><td class="pct">${fmtPct(m.totalRatio)}</td>
-  </tr>`;
-}
-
-function renderVenta(){
-  const tree = buildVentaTree(effectivePeriodos(), state.tipoVenta);
-  const visibleZonas = filterZonasSucursales(tree, sortedKeysVenta);
-
-  let html = '';
-  let scopeAggList = [];
-
-  visibleZonas.forEach((z, zIdx) => {
-    const { zKey, zNode, sucursalKeysAll, sucursalKeysEff, sucursalFilterActive } = z;
-    // Si el filtro de Sucursal esta activo, la fila de la zona muestra solo
-    // la suma de las sucursales seleccionadas (filtro real, no solo un
-    // despliegue visual de una entre varias).
-    const zAgg = sucursalFilterActive ? sumVentaAgg(sucursalKeysEff.map(s => zNode.children[s].agg)) : zNode.agg;
-    scopeAggList.push(zAgg);
-    const zPath = zKey;
-    const zExpanded = state.expandedVenta.has(zPath) || sucursalFilterActive;
-    if (zExpanded) state.expandedVenta.add(zPath);
-    html += rowHtmlVenta(0, zKey, zAgg, zPath, sucursalKeysAll.length > 0, zIdx % 2 === 0);
-
-    if (zExpanded){
-      sucursalKeysEff.forEach(sKey => {
-        const sNode = zNode.children[sKey];
-        const sPath = zPath + '||' + sKey;
-        const vendorKeys = sortedKeysVenta(sNode.children);
-        const sExpanded = state.expandedVenta.has(sPath) || sucursalFilterActive;
-        if (sExpanded) state.expandedVenta.add(sPath);
-        html += rowHtmlVenta(1, sKey, sNode.agg, sPath, vendorKeys.length > 0);
-        if (sExpanded){
-          vendorKeys.forEach(vKey => {
-            const vNode = sNode.children[vKey];
-            const vPath = sPath + '||' + vKey;
-            html += rowHtmlVenta(2, vKey, vNode.agg, vPath, false);
-          });
-        }
-      });
-    }
-  });
-
-  const scopeAgg = sumVentaAgg(scopeAggList);
-
-  if (!visibleZonas.length){
-    html = `<tr class="empty-row"><td colspan="14">No hay datos de Venta para este filtro.</td></tr>`;
-  } else {
-    html += totalRowHtmlVenta(scopeAgg);
-  }
-
-  document.getElementById('tbody-venta').innerHTML = html;
-}
-
 // ---- estado ----
 const periodos = Object.keys(HISTORIAL).sort().reverse();
 // Filtros multi-seleccion (Mes, Zona, Sucursal, Canal): cada uno se guarda
@@ -582,8 +395,8 @@ const periodos = Object.keys(HISTORIAL).sort().reverse();
 // vuelve a colapsar al Set vacio (misma cosa, representacion unica) -- ver
 // createMultiSelect() mas abajo. Flota/Retail (state.tipoVenta) es la unica
 // excepcion: sigue siendo de seleccion unica.
-// tipoVenta arranca en 'Retail' (tabla Cierre por Canal filtrada por Retail
-// por defecto); solo cambia si el usuario elige otra opcion o limpia el filtro.
+// tipoVenta arranca en 'Retail' por defecto; solo cambia si el usuario elige
+// otra opcion o limpia el filtro.
 const state = {
   meses: new Set([periodos[0]]), // por defecto solo el mes mas reciente; se puede elegir mas de uno
   zonas: new Set(),              // vacio = Todas las zonas
@@ -591,7 +404,6 @@ const state = {
   tipoVenta: 'Retail',
   canales: new Set(),            // vacio = Todos los canales (con Total); si hay seleccion, se oculta el Total
   expanded: new Set(),
-  expandedVenta: new Set(),
 };
 
 function effectivePeriodos(){
@@ -693,37 +505,29 @@ document.addEventListener('click', () => {
 });
 
 const $reset = document.getElementById('f-reset');
-const $tipoVenta = document.getElementById('f-tipo-venta');
-const $resetVenta = document.getElementById('f-reset-venta');
 const $tipoVentaFunnel = document.getElementById('f-tipo-venta-funnel');
 const $trSucursal = document.getElementById('ms-trigger-sucursal');
 
-$tipoVenta.innerHTML = `<option value="${ALL}">Todas</option><option value="Retail">Retail</option><option value="Flota">Flota</option>`;
-$tipoVenta.value = state.tipoVenta;
-
-// Filtro Flota/Retail duplicado en la barra de filtros del Funnel: misma
-// opciones y mismo estado (state.tipoVenta) que el de la tabla Cierre por
-// Canal, sincronizados en ambas direcciones.
 $tipoVentaFunnel.innerHTML = `<option value="${ALL}">Todas</option><option value="Retail">Retail</option><option value="Flota">Flota</option>`;
 $tipoVentaFunnel.value = state.tipoVenta;
 
 const msMes = createMultiSelect({
   triggerId: 'ms-trigger-mes', panelId: 'ms-panel-mes', allLabel: 'Todos',
   getSelected: () => state.meses,
-  onChange: () => { state.expanded.clear(); state.expandedVenta.clear(); render(); },
+  onChange: () => { state.expanded.clear(); render(); },
 });
 msMes.setOptions(periodos.map(p => ({ value: p, label: periodoLabel(p) })));
 
 const msZona = createMultiSelect({
   triggerId: 'ms-trigger-zona', panelId: 'ms-panel-zona', allLabel: 'Todas las zonas',
   getSelected: () => state.zonas,
-  onChange: () => { state.sucursales.clear(); state.expanded.clear(); state.expandedVenta.clear(); render(); },
+  onChange: () => { state.sucursales.clear(); state.expanded.clear(); render(); },
 });
 
 const msSucursal = createMultiSelect({
   triggerId: 'ms-trigger-sucursal', panelId: 'ms-panel-sucursal', allLabel: 'Todas las sucursales',
   getSelected: () => state.sucursales,
-  onChange: () => { state.expanded.clear(); state.expandedVenta.clear(); render(); },
+  onChange: () => { state.expanded.clear(); render(); },
 });
 
 const msCanal = createMultiSelect({
@@ -902,7 +706,6 @@ function render(){
 
   document.getElementById('tbody').innerHTML = html;
   document.getElementById('eyebrow').textContent = `Usados · Embudo Financiamiento · Venta`;
-  renderVenta();
 }
 
 document.getElementById('tbody').addEventListener('click', e => {
@@ -913,27 +716,12 @@ document.getElementById('tbody').addEventListener('click', e => {
   render();
 });
 
-document.getElementById('tbody-venta').addEventListener('click', e => {
-  const t = e.target.closest('.toggle');
-  if (!t || t.classList.contains('leaf')) return;
-  const path = t.dataset.path;
-  if (state.expandedVenta.has(path)) state.expandedVenta.delete(path); else state.expandedVenta.add(path);
-  renderVenta();
-});
-
-// render() reconstruye el arbol del Funnel con el tipoVenta actual (para sus
-// columnas Venta/% Cierre) y al final llama renderVenta(), asi que basta con
-// llamar render() aca: cubre ambas tablas. Los dos selects Flota/Retail (el
-// de la barra del Funnel y el de la tarjeta Cierre por Canal) comparten
-// state.tipoVenta y se mantienen sincronizados entre si.
-$tipoVenta.addEventListener('change', () => { state.tipoVenta = $tipoVenta.value; $tipoVentaFunnel.value = state.tipoVenta; render(); });
-$tipoVentaFunnel.addEventListener('change', () => { state.tipoVenta = $tipoVentaFunnel.value; $tipoVenta.value = state.tipoVenta; render(); });
-$resetVenta.addEventListener('click', () => {
-  state.tipoVenta = ALL; $tipoVenta.value = ALL; $tipoVentaFunnel.value = ALL; state.expandedVenta.clear(); render();
-});
+// El select Flota/Retail de la barra del Funnel es el unico control de
+// state.tipoVenta (ya no hay una tabla Cierre por Canal con su propio select).
+$tipoVentaFunnel.addEventListener('change', () => { state.tipoVenta = $tipoVentaFunnel.value; render(); });
 $reset.addEventListener('click', () => {
   state.zonas.clear(); state.sucursales.clear(); state.canales.clear();
-  state.expanded.clear(); state.expandedVenta.clear();
+  state.expanded.clear();
   msZona.updateTrigger(); msZona.renderPanel();
   msSucursal.updateTrigger(); msSucursal.renderPanel();
   msCanal.updateTrigger(); msCanal.renderPanel();
@@ -942,3 +730,4 @@ $reset.addEventListener('click', () => {
 
 render();
 </script>
+
