@@ -414,7 +414,7 @@
     <details class="legend-details">
       <summary>Ver definiciones del embudo</summary>
       <div class="legend-note">
-        <b>Cantidad</b> = igual que la columna Cantidad de la tabla de arriba (Lead + Renovaciones + ASC; Otros no tiene Cantidad). Es la base (100%) del embudo.
+        <b>Cantidad</b> = igual que la columna Cantidad de la tabla de arriba para Lead, Renovaciones y ASC. Otros no tiene una base propia, asi que en este embudo su Cantidad se toma igual a su Cotización (100% Cot/Cantidad). Es la base (100%) del embudo.
         <b>Cotización</b> = igual que Total &gt; Cotización (todos los canales, incluye Otros).
         <b>Solicitud</b> = cotizaciones del Embudo Forum cuyo estado_operacion es distinto de "Cotización" (mismo universo de filas que Cotización, incluye Otros).
         <b>Aprobado</b> = cotizaciones del Embudo Forum cuyo estado_operacion es "Aprobada", "Pend. Firma", "Pre Cursada", "Cursada" o "Bloqueada" (mismo universo, incluye Otros).
@@ -593,6 +593,10 @@ const state = {
   tipoVenta: 'Retail',
   canales: new Set(),            // vacio = Todos los canales (con Total); si hay seleccion, se oculta el Total
   expanded: new Set(),
+  // Filtro de canal PROPIO del embudo (chips de la tarjeta), independiente
+  // de "canales" (Filtro Canal de arriba, que es el que filtra la tabla).
+  // '' = Todos; si no, uno de FUNNEL_CHANNELS.key.
+  funnelCanal: '',
 };
 
 function effectivePeriodos(){
@@ -857,11 +861,21 @@ function totalRowHtml(agg){
 // Cantidad, que es la base = 100%) se calculan siempre contra Cantidad (no
 // contra la etapa anterior), igual que en el formato de referencia
 // (Cot/Leads, % Cierre). ----
+// El embudo tiene su propio filtro de canal (chips de la tarjeta,
+// state.funnelCanal) totalmente independiente del Filtro Canal de arriba
+// (state.canales, que filtra la tabla) -- los chips del embudo NO deben
+// afectar que columnas/Total se muestran en la tabla.
+function isFunnelCanalActive(key){ return !state.funnelCanal || state.funnelCanal === key; }
+
 function funnelStages(agg){
   let cantidad = 0, cotizacion = 0, solicitud = 0, aprobado = 0, ventas = 0;
   FUNNEL_CHANNELS.forEach(c => {
-    if (!isCanalActive(c.key)) return;
+    if (!isFunnelCanalActive(c.key)) return;
+    // Otros no tiene una base de Cantidad propia (a diferencia de Lead /
+    // Renovaciones / ASC); solo para el embudo, su Cantidad se toma igual a
+    // su Cotizacion, para que la etapa base no quede en 0 al filtrar Otros.
     if (c.hasCantidad) cantidad += agg[c.cField];
+    else cantidad += agg[c.qField];
     cotizacion += agg[c.qField];
     solicitud += agg[c.sField];
     aprobado += agg[c.aField];
@@ -883,31 +897,29 @@ const FUNNEL_ICONS = {
   dots: '<circle cx="5" cy="12" r="1.9" fill="var(--f-icon)"/><circle cx="12" cy="12" r="1.9" fill="var(--f-icon)"/><circle cx="19" cy="12" r="1.9" fill="var(--f-icon)"/>',
 };
 
+// Paleta unica en tonalidades de azul para el grafico del embudo (cono SVG,
+// color del titulo y del chip activo): todos los canales usan las mismas
+// c1..c5 -- solo el icono (forma/color/fondo del badge) sigue distinguiendo
+// el canal seleccionado.
+const FUNNEL_BLUE = {
+  c1:'#0a4a8f', c1lt:'#789bc1', c1dk:'#073567', c2:'#3f8cc7', c2lt:'#95c0e0', c2dk:'#2d658f', c3:'#93c6ea', c3lt:'#c4e0f3', c3dk:'#6a8fa8',
+  c4:'#b6d8f1', c4lt:'#d7eaf7', c4dk:'#839cae', c5:'#d2e7f6', c5lt:'#e6f2fa', c5dk:'#97a6b1',
+};
 const FUNNEL_THEME = {
-  '':      {title:'Embudo Funnel Usados', subtitle:'Del contacto a la venta',       icon:'check',    iconColor:'#0a4f96', iconBg:'#e7eef8',
-            c1:'#0a4a8f', c1lt:'#789bc1', c1dk:'#073567', c2:'#3f8cc7', c2lt:'#95c0e0', c2dk:'#2d658f', c3:'#93c6ea', c3lt:'#c4e0f3', c3dk:'#6a8fa8',
-            c4:'#b6d8f1', c4lt:'#d7eaf7', c4dk:'#839cae', c5:'#d2e7f6', c5lt:'#e6f2fa', c5dk:'#97a6b1'},
-  lead:    {title:'Lead', subtitle:'Del contacto a la venta',                        icon:'users',    iconColor:'#0e7a52', iconBg:'#e1f3ea',
-            c1:'#0e7a52', c1lt:'#7ab6a0', c1dk:'#0a583b', c2:'#2fa87d', c2lt:'#8dcfb8', c2dk:'#22795a', c3:'#8ed4b3', c3lt:'#c1e7d5', c3dk:'#669981',
-            c4:'#b2e2cb', c4lt:'#d5efe2', c4dk:'#80a392', c5:'#d0eddf', c5lt:'#e5f5ed', c5dk:'#96aba1'},
-  renov:   {title:'Renovaciones', subtitle:'Del contacto a la renovación',           icon:'refresh',  iconColor:'#0a4f96', iconBg:'#e7eef8',
-            c1:'#0a4a8f', c1lt:'#789bc1', c1dk:'#073567', c2:'#3f8cc7', c2lt:'#95c0e0', c2dk:'#2d658f', c3:'#93c6ea', c3lt:'#c4e0f3', c3dk:'#6a8fa8',
-            c4:'#b6d8f1', c4lt:'#d7eaf7', c4dk:'#839cae', c5:'#d2e7f6', c5lt:'#e6f2fa', c5dk:'#97a6b1'},
-  asc:     {title:'ASC', subtitle:'Del contacto a la venta',                         icon:'briefcase',iconColor:'#9a5b0a', iconBg:'#f7ecd9',
-            c1:'#9a5b0a', c1lt:'#c7a578', c1dk:'#6f4207', c2:'#d68a2e', c2lt:'#e8bf8c', c2dk:'#9a6321', c3:'#f0c384', c3lt:'#f7debb', c3dk:'#ad8c5f',
-            c4:'#f5d6ab', c4lt:'#fae8d1', c4dk:'#b09a7b', c5:'#f9e6cb', c5lt:'#fcf1e2', c5dk:'#b3a692'},
-  otros:   {title:'Otros canales', subtitle:'Del contacto a la venta',               icon:'dots',     iconColor:'#4a5568', iconBg:'#e7e9ed',
-            c1:'#4a5568', c1lt:'#9ba2ac', c1dk:'#353d4b', c2:'#7c8ba1', c2lt:'#b7bfcb', c2dk:'#596474', c3:'#c3cbd9', c3lt:'#dee2ea', c3dk:'#8c929c',
-            c4:'#d6dce5', c4lt:'#e8ecf1', c4dk:'#9a9ea5', c5:'#e6e9ef', c5lt:'#f1f3f6', c5dk:'#a6a8ac'},
+  '':      {title:'Embudo Funnel Usados', subtitle:'Del contacto a la venta',       icon:'check',    iconColor:'#0a4f96', iconBg:'#e7eef8', ...FUNNEL_BLUE},
+  lead:    {title:'Lead', subtitle:'Del contacto a la venta',                        icon:'users',    iconColor:'#0e7a52', iconBg:'#e1f3ea', ...FUNNEL_BLUE},
+  renov:   {title:'Renovaciones', subtitle:'Del contacto a la renovación',           icon:'refresh',  iconColor:'#0a4f96', iconBg:'#e7eef8', ...FUNNEL_BLUE},
+  asc:     {title:'ASC', subtitle:'Del contacto a la venta',                         icon:'briefcase',iconColor:'#9a5b0a', iconBg:'#f7ecd9', ...FUNNEL_BLUE},
+  otros:   {title:'Otros canales', subtitle:'Del contacto a la venta',               icon:'dots',     iconColor:'#4a5568', iconBg:'#e7e9ed', ...FUNNEL_BLUE},
 };
 
 let funnelIconKey = null; // evita reescribir el innerHTML del icono si no cambio
 
-// Un unico canal seleccionado -> ese canal es el "activo"; 0 o 2+ -> neutro
-// ('', usa el tema/etiqueta general). Compartido por applyFunnelTheme() y
-// renderFunnel() (etiqueta dinamica de %Cot/Cantidad).
+// Canal activo del embudo (segun su propio filtro, state.funnelCanal, no el
+// Filtro Canal de la tabla): '' = Todos. Compartido por applyFunnelTheme()
+// y renderFunnel() (etiqueta dinamica de %Cot/Cantidad).
 function getFunnelActiveKey(){
-  return state.canales.size === 1 ? [...state.canales][0] : '';
+  return state.funnelCanal || '';
 }
 
 // Etiqueta de la fila %Cot/Cantidad segun el canal activo: con "Todos" (o
@@ -940,20 +952,18 @@ function applyFunnelTheme(){
 
   document.querySelectorAll('#funnel-chip-row .funnel-chip').forEach($chip => {
     const key = $chip.getAttribute('data-canal');
-    // "Todos" solo se marca con 0 canales elegidos; un canal puntual solo
-    // cuando es el unico elegido; con 2+ canales (elegidos desde el filtro
-    // de arriba) ningun chip queda marcado, ya que no representan esa combinacion.
-    const isActive = key === '' ? state.canales.size === 0 : key === activeKey;
+    const isActive = key === activeKey;
     $chip.classList.toggle('active', isActive);
     $chip.style.background = isActive ? theme.c1 : '';
   });
 }
 
+// Los chips del embudo solo cambian state.funnelCanal (propio del embudo);
+// no tocan state.canales, asi que no afectan el Filtro Canal ni la tabla de
+// arriba. Se re-renderiza todo por simplicidad, pero la tabla queda igual
+// porque su filtro (state.canales) no cambio.
 function setFunnelChannel(key){
-  if (key){ state.canales.clear(); state.canales.add(key); }
-  else { state.canales.clear(); }
-  msCanal.updateTrigger();
-  msCanal.renderPanel();
+  state.funnelCanal = key || '';
   render();
 }
 
@@ -1066,3 +1076,4 @@ $reset.addEventListener('click', () => {
 
 render();
 </script>
+
