@@ -391,7 +391,7 @@
         <div class="funnel-stats-row">
           <span><span class="funnel-stat-name">Cot/Oportunidad&nbsp;</span><span class="funnel-stat-value" id="funnel-stat-cot">—</span></span>
           <span class="funnel-stat-sep">|</span>
-          <span><span class="funnel-stat-name">% Cierre&nbsp;</span><span class="funnel-stat-value" id="funnel-stat-cierre">—</span></span>
+          <span><span class="funnel-stat-name">% Cierre Aprobados&nbsp;</span><span class="funnel-stat-value" id="funnel-stat-cierre">—</span></span>
           <span class="funnel-stat-sep">|</span>
           <span><span class="funnel-stat-name">% MS Cot&nbsp;</span><span class="funnel-stat-value" id="funnel-stat-mscot">—</span></span>
         </div>
@@ -437,7 +437,7 @@
           <div class="fc-row" style="top:23.60%;height:16.10%"><span class="fc-dot"></span><div class="fc-text"><span class="fc-pct" id="fc-mscot">—</span><span class="fc-desc">% MS Cot</span></div></div>
           <div class="fc-row" style="top:42.32%;height:16.10%"><span class="fc-dot"></span><div class="fc-text"><span class="fc-pct" id="fc-3">—</span><span class="fc-desc">% Sol/Cot</span></div></div>
           <div class="fc-row" style="top:61.05%;height:16.10%"><span class="fc-dot"></span><div class="fc-text"><span class="fc-pct" id="fc-4">—</span><span class="fc-desc">% Aprobación</span></div></div>
-          <div class="fc-row" style="top:79.78%;height:16.10%"><span class="fc-dot"></span><div class="fc-text"><span class="fc-pct" id="fc-5">—</span><span class="fc-desc">% Cierre</span></div></div>
+          <div class="fc-row" style="top:79.78%;height:16.10%"><span class="fc-dot"></span><div class="fc-text"><span class="fc-pct" id="fc-5">—</span><span class="fc-desc">% Cierre Aprobados</span></div></div>
         </div>
       </div>
     </div>
@@ -452,7 +452,7 @@
         <b>%</b> junto a Cotización = Cotización dividida por Oportunidad, igual que "Cot/Oportunidad" del encabezado.
         <b>% Sol/Cot</b> = Solicitud dividida por Cotización (la etapa inmediatamente anterior).
         <b>% Aprobación</b> = Aprobado dividido por Solicitud (la etapa inmediatamente anterior).
-        <b>% Cierre</b> = Ventas dividido por Aprobado (la etapa inmediatamente anterior), igual que "% Cierre" del encabezado.
+        <b>% Cierre Aprobados</b> = Ventas dividido por Aprobado (la etapa inmediatamente anterior), igual que "% Cierre Aprobados" del encabezado.
         <b>% MS Cot</b> del encabezado = Cotización del/los canal(es) elegido(s) ÷ Cotización de TODOS los canales (participación de mercado de cotizaciones).
         Con el filtro en "Todos" (vista total), Cotización, Solicitud y Aprobado quedan exactamente iguales a los totales del Embudo Forum, ya que ese embudo abarca los mismos 4 canales (Lead, Renovaciones, ASC y Otros).
         Los botones (Todos / Lead / Renovaciones / ASC / Otros) filtran este embudo por canal — es el mismo filtro Canal de arriba, asi que ambos quedan sincronizados. Con un solo canal elegido, la tarjeta toma su color e ícono; con "Todos" o varios canales a la vez usa el tema general.
@@ -536,7 +536,7 @@
           <div class="funnel-stats-row">
             <span><span class="funnel-stat-name">Cot/Oportunidad&nbsp;</span><span class="funnel-stat-value" id="funnel-stat-cot-ren">—</span></span>
             <span class="funnel-stat-sep">|</span>
-            <span><span class="funnel-stat-name">% Cierre&nbsp;</span><span class="funnel-stat-value" id="funnel-stat-cierre-ren">—</span></span>
+            <span><span class="funnel-stat-name">% Cierre Aprobados&nbsp;</span><span class="funnel-stat-value" id="funnel-stat-cierre-ren">—</span></span>
             <span class="funnel-stat-sep">|</span>
             <span><span class="funnel-stat-name">% MS Cot&nbsp;</span><span class="funnel-stat-value" id="funnel-stat-mscot-ren">—</span></span>
           </div>
@@ -580,7 +580,7 @@
             <div class="fc-row" style="top:23.60%;height:16.10%"><span class="fc-dot"></span><div class="fc-text"><span class="fc-pct" id="fc-mscot-ren">—</span><span class="fc-desc">% MS Cot</span></div></div>
             <div class="fc-row" style="top:42.32%;height:16.10%"><span class="fc-dot"></span><div class="fc-text"><span class="fc-pct" id="fc-3-ren">—</span><span class="fc-desc">% Sol/Cot</span></div></div>
             <div class="fc-row" style="top:61.05%;height:16.10%"><span class="fc-dot"></span><div class="fc-text"><span class="fc-pct" id="fc-4-ren">—</span><span class="fc-desc">% Aprobación</span></div></div>
-            <div class="fc-row" style="top:79.78%;height:16.10%"><span class="fc-dot"></span><div class="fc-text"><span class="fc-pct" id="fc-5-ren">—</span><span class="fc-desc">% Cierre</span></div></div>
+            <div class="fc-row" style="top:79.78%;height:16.10%"><span class="fc-dot"></span><div class="fc-text"><span class="fc-pct" id="fc-5-ren">—</span><span class="fc-desc">% Cierre Aprobados</span></div></div>
           </div>
         </div>
       </div>
@@ -593,14 +593,14 @@
           <b>Solicitud</b> = cotizaciones de ese origen cuyo estado_operacion es distinto de "Cotización".
           <b>Aprobado</b> = cotizaciones de ese origen cuyo estado_operacion es "Aprobada", "Pend. Firma", "Pre Cursada", "Cursada" o "Bloqueada".
           <b>Ventas</b> = Venta de ese origen (respeta el filtro Flota/Retail de arriba).
-          <b>% Sol/Cot</b> = Solicitud ÷ Cotización. <b>% Aprobación</b> = Aprobado ÷ Solicitud. <b>% Cierre</b> = Ventas ÷ Aprobado.
+          <b>% Sol/Cot</b> = Solicitud ÷ Cotización. <b>% Aprobación</b> = Aprobado ÷ Solicitud. <b>% Cierre Aprobados</b> = Ventas ÷ Aprobado.
           <b>% MS Cot</b> = Cotización de ese origen ÷ Cotización de TODOS los canales (Lead+Renovaciones+ASC+Otros) del mismo nivel.
         </div>
       </details>
     </div>
   </div>
 
-  <footer id="footer">Fuente: Base_Cotizaciones_Usados_Cruce.xlsx · Maestro_homologado.xlsx (Homologado Sucursal → Zona) · Actualizado: 30-09-2026 18:22</footer>
+  <footer id="footer">Fuente: Base_Cotizaciones_Usados_Cruce.xlsx · Maestro_homologado.xlsx (Homologado Sucursal → Zona) · Actualizado: 30-09-2026 18:46</footer>
 </div>
 
 <script>
@@ -1602,4 +1602,3 @@ $resetRenov.addEventListener('click', resetFiltros);
 setPageTab(state.pageTab);
 render();
 </script>
-
