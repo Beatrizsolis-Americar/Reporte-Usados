@@ -368,12 +368,12 @@
       <div class="legend-note">
         <b>Cot/Leads, Cot/Renov, %Cot/ASC</b> = Cotización ÷ Oportunidad de esa misma categoría.
         <b>Venta</b> = ventas de esa categoría (misma clasificación Lead/Renovaciones/ASC/Otros que Cotización); respeta el filtro Flota/Retail de arriba.
-        <b>% Cierre</b> = Venta ÷ Oportunidad de esa misma categoría (no aplica a Otros, que no tiene Oportunidad).
+        <b>% Cierre Aprob</b> = Venta ÷ Oportunidad de esa misma categoría (no aplica a Otros, que no tiene Oportunidad).
         <b>% MS Cot</b> = participación de esa categoría sobre el total de cotizaciones de TODOS los canales (incluye Otros) del mismo nivel (zona o sucursal).
         <b>Total &gt; Cotización</b> = total de Cotización de Embudo Forum de ese nivel (Lead + Renovaciones + ASC + Otros, el total real del embudo).
         <b>%Cot/Oport</b> (columna Total) = Cotización total de esa fila (incluye Otros) ÷ Oportunidad total (Lead+Renovaciones+ASC) de ese nivel.
         <b>Total &gt; Venta</b> = venta total de Usados de ese nivel (Lead + Renovaciones + ASC + Otros, la venta real total).
-        <b>Total &gt; % Cierre</b> = Venta total de esa fila (incluye Otros) ÷ Oportunidad total (Lead+Renovaciones+ASC) de ese nivel.
+        <b>Total &gt; % Cierre Aprob</b> = Venta total de esa fila (incluye Otros) ÷ Oportunidad total (Lead+Renovaciones+ASC) de ese nivel.
         <b>Filtro Canal</b> = muestra u oculta las columnas de cada canal en esta tabla (se puede elegir mas de uno). Al filtrar por Canal, la columna Total se oculta (deja de ser la suma de todos los canales).
       </div>
     </details>
@@ -500,9 +500,9 @@
               <th colspan="6" class="g-total grp-b-total">Total Renovaciones</th>
             </tr>
             <tr class="metric-row">
-              <th class="g-renov grp-b-forum">Oportunidad</th><th class="g-renov">Cotización</th><th class="g-renov">Venta</th><th class="g-renov">Cot/Renov</th><th class="g-renov">% Cierre</th><th class="g-renov">% MS Cot</th>
-              <th class="g-renov-ia grp-b-ia">Oportunidad</th><th class="g-renov-ia">Cotización</th><th class="g-renov-ia">Venta</th><th class="g-renov-ia">Cot/Renov</th><th class="g-renov-ia">% Cierre</th><th class="g-renov-ia">% MS Cot</th>
-              <th class="g-total grp-b-total">Oportunidad</th><th class="g-total">Cotización</th><th class="g-total">Venta</th><th class="g-total">Cot/Renov</th><th class="g-total">% Cierre</th><th class="g-total">% MS Cot</th>
+              <th class="g-renov grp-b-forum">Oportunidad</th><th class="g-renov">Cotización</th><th class="g-renov">Venta</th><th class="g-renov">Cot/Renov</th><th class="g-renov">% Cierre Aprob</th><th class="g-renov">% MS Cot</th>
+              <th class="g-renov-ia grp-b-ia">Oportunidad</th><th class="g-renov-ia">Cotización</th><th class="g-renov-ia">Venta</th><th class="g-renov-ia">Cot/Renov</th><th class="g-renov-ia">% Cierre Aprob</th><th class="g-renov-ia">% MS Cot</th>
+              <th class="g-total grp-b-total">Oportunidad</th><th class="g-total">Cotización</th><th class="g-total">Venta</th><th class="g-total">Cot/Renov</th><th class="g-total">% Cierre Aprob</th><th class="g-total">% MS Cot</th>
             </tr>
           </thead>
           <tbody id="tbody-renov"></tbody>
@@ -517,7 +517,7 @@
           <b>Cotización</b> = cruce con el Embudo Forum: cotizaciones clasificadas como Renovaciones cuya clave (rut+marca+sucursal+periodo) matchea ese origen. Si una clave existe en ambos origenes a la vez, se cuenta en Forum (fuente prioritaria).
           <b>Venta</b> = ventas clasificadas como Renovaciones que matchean ese origen (respeta el filtro Flota/Retail de arriba).
           <b>Cot/Renov</b> = Cotización ÷ Oportunidad, de ese origen.
-          <b>% Cierre</b> = Venta ÷ Oportunidad, de ese origen.
+          <b>% Cierre Aprob</b> = Venta ÷ Oportunidad, de ese origen.
           <b>% MS Cot</b> = participación de la Cotización de ese origen sobre el total de cotizaciones de TODOS los canales (incluye Otros) del mismo nivel (zona o sucursal).
           <b>Total Renovaciones</b> = Forum + IA combinados (igual a la columna Renovaciones de la tabla "Funnel por Canal").
         </div>
@@ -600,7 +600,7 @@
     </div>
   </div>
 
-  <footer id="footer">Fuente: Base_Cotizaciones_Usados_Cruce.xlsx · Maestro_homologado.xlsx (Homologado Sucursal → Zona) · Actualizado: 30-09-2026 18:46</footer>
+  <footer id="footer">Fuente: Base_Cotizaciones_Usados_Cruce.xlsx · Maestro_homologado.xlsx (Homologado Sucursal → Zona) · Actualizado: 30-09-2026 18:51</footer>
 </div>
 
 <script>
@@ -1114,7 +1114,7 @@ function renderFunnelHead(){
   activos.forEach(c => {
     groupRow += `<th colspan="${c.hasCantidad ? 6 : 3}" class="${c.cls} grp-b-${c.key}">${c.label}</th>`;
     if (c.hasCantidad){
-      metricRow += `<th class="${c.cls} grp-b-${c.key}">Oportunidad</th><th class="${c.cls}">Cotización</th><th class="${c.cls}">Venta</th><th class="${c.cls}">${c.ratioLabel}</th><th class="${c.cls}">% Cierre</th><th class="${c.cls}">% MS Cot</th>`;
+      metricRow += `<th class="${c.cls} grp-b-${c.key}">Oportunidad</th><th class="${c.cls}">Cotización</th><th class="${c.cls}">Venta</th><th class="${c.cls}">${c.ratioLabel}</th><th class="${c.cls}">% Cierre Aprob</th><th class="${c.cls}">% MS Cot</th>`;
     } else {
       metricRow += `<th class="${c.cls} grp-b-${c.key}">Cotización</th><th class="${c.cls}">Venta</th><th class="${c.cls}">% MS Cot</th>`;
     }
@@ -1123,7 +1123,7 @@ function renderFunnelHead(){
   // se esta filtrando por Canal; al filtrar, se oculta.
   if (!isCanalFilterActive()){
     groupRow += `<th colspan="5" class="g-total grp-b-total">Total</th>`;
-    metricRow += `<th class="g-total grp-b-total">Oportunidad</th><th class="g-total">Cotización</th><th class="g-total">Venta</th><th class="g-total">%Cot/Oport</th><th class="g-total">% Cierre</th>`;
+    metricRow += `<th class="g-total grp-b-total">Oportunidad</th><th class="g-total">Cotización</th><th class="g-total">Venta</th><th class="g-total">%Cot/Oport</th><th class="g-total">% Cierre Aprob</th>`;
   }
   document.getElementById('funnel-group-row').innerHTML = groupRow;
   document.getElementById('funnel-metric-row').innerHTML = metricRow;
