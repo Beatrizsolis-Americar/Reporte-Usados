@@ -371,7 +371,7 @@
     <details class="legend-details">
       <summary>Ver definiciones de columnas</summary>
       <div class="legend-note">
-        <b>Cot/Leads, Cot/Renov</b> = Cotización ÷ Oportunidad de esa misma categoría (ASC no muestra esta columna).
+        <b>Cot/Leads, Cot/Renov</b> = Cotización ÷ Oportunidad de esa misma categoría (ASC no muestra esta columna; tampoco Cotización ni % MS Cot en esta tabla, aunque su cotización sigue contando en el Total).
         <b>Venta</b> = ventas de esa categoría (misma clasificación Lead/Renovaciones/ASC/Otros que Cotización); respeta el filtro Flota/Retail y el filtro Categoría Venta (nombre_subcategoria_venta) de arriba — este último afecta solo a las ventas, el resto de las columnas no cambia.
         <b>% Cierre</b> = Venta ÷ Oportunidad de esa misma categoría (no aplica a Otros, que no tiene Oportunidad).
         <b>% MS Cot</b> = participación de esa categoría sobre el total de cotizaciones de TODOS los canales (incluye Otros) del mismo nivel (zona o sucursal).
@@ -611,7 +611,7 @@
     </div>
   </div>
 
-  <footer id="footer">Fuente: Base_Cotizaciones_Usados_Cruce.xlsx · Maestro_homologado.xlsx (Homologado Sucursal → Zona) · Actualizado: 08-10-2026 12:39</footer>
+  <footer id="footer">Fuente: Base_Cotizaciones_Usados_Cruce.xlsx · Maestro_homologado.xlsx (Homologado Sucursal → Zona) · Actualizado: 08-10-2026 14:09</footer>
 </div>
 
 <script>
@@ -640,7 +640,7 @@ const FUNNEL_CHANNELS = [
     cField:'leadC',  qField:'leadQ',  nField:'leadN',  sField:'leadS',  aField:'leadA',  ratioField:'leadRatio',  cierreField:'leadCierre',  msField:'leadMS',  msvField:'leadMSV'},
   {key:'renov', label:'Renovaciones',  cls:'g-renov', hasCantidad:true,  ratioLabel:'Cot/Renov',
     cField:'renovC', qField:'renovQ', nField:'renovN', sField:'renovS', aField:'renovA', ratioField:'renovRatio', cierreField:'renovCierre', msField:'renovMS', msvField:'renovMSV'},
-  {key:'asc',   label:'ASC',           cls:'g-asc',   hasCantidad:true,  hideRatio:true, ratioLabel:'%Cot/ASC',
+  {key:'asc',   label:'ASC',           cls:'g-asc',   hasCantidad:true,  hideRatio:true, hideCot:true, ratioLabel:'%Cot/ASC',
     cField:'ascC',   qField:'ascQ',   nField:'ascN',   sField:'ascS',   aField:'ascA',   ratioField:'ascRatio',   cierreField:'ascCierre',   msField:'ascMS',   msvField:'ascMSV'},
   {key:'otros', label:'Otros canales', cls:'g-otros', hasCantidad:false,
     qField:'otrosQ', nField:'otrosN', sField:'otrosS', aField:'otrosA', msField:'otrosMS', msvField:'otrosMSV'},
@@ -1171,7 +1171,7 @@ function filterZonasSucursales(tree, sortedKeysFn){
 // segun los canales activos en state.canales (filtro Canal), asi los
 // colspan/headers siempre calzan con las celdas de datos generadas mas abajo. ----
 // columnas por canal: Oportunidad, Cotizacion, Venta, [ratio Cot/..., salvo ASC], % Cierre, % MS Cot, % MS Venta
-function funnelChanCols(c){ return c.hasCantidad ? (c.hideRatio ? 6 : 7) : 4; }
+function funnelChanCols(c){ return c.hasCantidad ? 7 - (c.hideRatio ? 1 : 0) - (c.hideCot ? 2 : 0) : 4; }
 
 function renderFunnelHead(){
   const activos = FUNNEL_CHANNELS.filter(c => isCanalActive(c.key));
@@ -1180,7 +1180,7 @@ function renderFunnelHead(){
   activos.forEach(c => {
     groupRow += `<th colspan="${funnelChanCols(c)}" class="${c.cls} grp-b-${c.key}">${c.label}</th>`;
     if (c.hasCantidad){
-      metricRow += `<th class="${c.cls} grp-b-${c.key}">Oportunidad</th><th class="${c.cls}">Cotización</th><th class="${c.cls}">Venta</th>${c.hideRatio ? '' : `<th class="${c.cls}">${c.ratioLabel}</th>`}<th class="${c.cls}">% Cierre</th><th class="${c.cls}">% MS Cot</th><th class="${c.cls}">% MS Venta</th>`;
+      metricRow += `<th class="${c.cls} grp-b-${c.key}">Oportunidad</th>${c.hideCot ? '' : `<th class="${c.cls}">Cotización</th>`}<th class="${c.cls}">Venta</th>${c.hideRatio ? '' : `<th class="${c.cls}">${c.ratioLabel}</th>`}<th class="${c.cls}">% Cierre</th>${c.hideCot ? '' : `<th class="${c.cls}">% MS Cot</th>`}<th class="${c.cls}">% MS Venta</th>`;
     } else {
       metricRow += `<th class="${c.cls} grp-b-${c.key}">Cotización</th><th class="${c.cls}">Venta</th><th class="${c.cls}">% MS Cot</th><th class="${c.cls}">% MS Venta</th>`;
     }
@@ -1207,7 +1207,7 @@ function funnelColCount(){
 
 function funnelChannelCells(c, m){
   if (c.hasCantidad){
-    return `<td class="grp-b-${c.key}">${fmtInt(m[c.cField])}</td><td>${fmtInt(m[c.qField])}</td><td>${fmtInt(m[c.nField])}</td>${c.hideRatio ? '' : `<td>${fmtPct(m[c.ratioField])}</td>`}<td>${fmtPct(m[c.cierreField])}</td><td>${fmtPct(m[c.msField])}</td><td>${fmtPct(m[c.msvField])}</td>`;
+    return `<td class="grp-b-${c.key}">${fmtInt(m[c.cField])}</td>${c.hideCot ? '' : `<td>${fmtInt(m[c.qField])}</td>`}<td>${fmtInt(m[c.nField])}</td>${c.hideRatio ? '' : `<td>${fmtPct(m[c.ratioField])}</td>`}<td>${fmtPct(m[c.cierreField])}</td>${c.hideCot ? '' : `<td>${fmtPct(m[c.msField])}</td>`}<td>${fmtPct(m[c.msvField])}</td>`;
   }
   return `<td class="grp-b-${c.key}">${fmtInt(m[c.qField])}</td><td>${fmtInt(m[c.nField])}</td><td>${fmtPct(m[c.msField])}</td><td>${fmtPct(m[c.msvField])}</td>`;
 }
