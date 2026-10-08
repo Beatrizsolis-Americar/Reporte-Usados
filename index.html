@@ -371,10 +371,11 @@
     <details class="legend-details">
       <summary>Ver definiciones de columnas</summary>
       <div class="legend-note">
-        <b>Cot/Leads, Cot/Renov, %Cot/ASC</b> = Cotización ÷ Oportunidad de esa misma categoría.
+        <b>Cot/Leads, Cot/Renov</b> = Cotización ÷ Oportunidad de esa misma categoría (ASC no muestra esta columna).
         <b>Venta</b> = ventas de esa categoría (misma clasificación Lead/Renovaciones/ASC/Otros que Cotización); respeta el filtro Flota/Retail y el filtro Categoría Venta (nombre_subcategoria_venta) de arriba — este último afecta solo a las ventas, el resto de las columnas no cambia.
         <b>% Cierre</b> = Venta ÷ Oportunidad de esa misma categoría (no aplica a Otros, que no tiene Oportunidad).
         <b>% MS Cot</b> = participación de esa categoría sobre el total de cotizaciones de TODOS los canales (incluye Otros) del mismo nivel (zona o sucursal).
+        <b>% MS Venta</b> = participación de la Venta de ese canal sobre la venta total de TODOS los canales (incluye Otros) del mismo nivel (zona o sucursal); respeta los filtros Flota/Retail y Categoría Venta.
         <b>Total &gt; Cotización</b> = total de Cotización de Embudo Forum de ese nivel (Lead + Renovaciones + ASC + Otros, el total real del embudo).
         <b>%Cot/Oport</b> (columna Total) = Cotización total de esa fila (incluye Otros) ÷ Oportunidad total (Lead+Renovaciones+ASC) de ese nivel.
         <b>Total &gt; Venta</b> = venta total de Usados de ese nivel (Lead + Renovaciones + ASC + Otros, la venta real total).
@@ -610,7 +611,7 @@
     </div>
   </div>
 
-  <footer id="footer">Fuente: Base_Cotizaciones_Usados_Cruce.xlsx · Maestro_homologado.xlsx (Homologado Sucursal → Zona) · Actualizado: 08-10-2026 11:45</footer>
+  <footer id="footer">Fuente: Base_Cotizaciones_Usados_Cruce.xlsx · Maestro_homologado.xlsx (Homologado Sucursal → Zona) · Actualizado: 08-10-2026 12:06</footer>
 </div>
 
 <script>
@@ -636,13 +637,13 @@ const ALL = '__ALL__';
 // enteros primero -> Cantidad, Cotizacion, Venta; luego ratio/porcentajes) ----
 const FUNNEL_CHANNELS = [
   {key:'lead',  label:'Lead',          cls:'g-lead',  hasCantidad:true,  ratioLabel:'Cot/Leads',
-    cField:'leadC',  qField:'leadQ',  nField:'leadN',  sField:'leadS',  aField:'leadA',  ratioField:'leadRatio',  cierreField:'leadCierre',  msField:'leadMS'},
+    cField:'leadC',  qField:'leadQ',  nField:'leadN',  sField:'leadS',  aField:'leadA',  ratioField:'leadRatio',  cierreField:'leadCierre',  msField:'leadMS',  msvField:'leadMSV'},
   {key:'renov', label:'Renovaciones',  cls:'g-renov', hasCantidad:true,  ratioLabel:'Cot/Renov',
-    cField:'renovC', qField:'renovQ', nField:'renovN', sField:'renovS', aField:'renovA', ratioField:'renovRatio', cierreField:'renovCierre', msField:'renovMS'},
-  {key:'asc',   label:'ASC',           cls:'g-asc',   hasCantidad:true,  ratioLabel:'%Cot/ASC',
-    cField:'ascC',   qField:'ascQ',   nField:'ascN',   sField:'ascS',   aField:'ascA',   ratioField:'ascRatio',   cierreField:'ascCierre',   msField:'ascMS'},
+    cField:'renovC', qField:'renovQ', nField:'renovN', sField:'renovS', aField:'renovA', ratioField:'renovRatio', cierreField:'renovCierre', msField:'renovMS', msvField:'renovMSV'},
+  {key:'asc',   label:'ASC',           cls:'g-asc',   hasCantidad:true,  hideRatio:true, ratioLabel:'%Cot/ASC',
+    cField:'ascC',   qField:'ascQ',   nField:'ascN',   sField:'ascS',   aField:'ascA',   ratioField:'ascRatio',   cierreField:'ascCierre',   msField:'ascMS',   msvField:'ascMSV'},
   {key:'otros', label:'Otros canales', cls:'g-otros', hasCantidad:false,
-    qField:'otrosQ', nField:'otrosN', sField:'otrosS', aField:'otrosA', msField:'otrosMS'},
+    qField:'otrosQ', nField:'otrosN', sField:'otrosS', aField:'otrosA', msField:'otrosMS', msvField:'otrosMSV'},
 ];
 
 const fmtInt = n => Math.round(n).toLocaleString('es-CL');
@@ -768,6 +769,8 @@ function derive(agg){
     ...agg, totalQ: totalQAll, totalC, totalN: totalNAll,
     leadRatio: div(agg.leadQ, agg.leadC), renovRatio: div(agg.renovQ, agg.renovC), ascRatio: div(agg.ascQ, agg.ascC),
     leadMS: div(agg.leadQ, totalQAll), renovMS: div(agg.renovQ, totalQAll), ascMS: div(agg.ascQ, totalQAll), otrosMS: div(agg.otrosQ, totalQAll),
+    // % MS Venta: Venta del canal ÷ Venta de TODOS los canales (incluye Otros).
+    leadMSV: div(agg.leadN, totalNAll), renovMSV: div(agg.renovN, totalNAll), ascMSV: div(agg.ascN, totalNAll), otrosMSV: div(agg.otrosN, totalNAll),
     // %Cot/Cant y % Cierre (columna Total) se calculan sobre los mismos
     // valores que se muestran en esa misma fila (Cotizacion y Venta totales,
     // que incluyen Otros) para que cuadren con lo que se ve en la tabla.
@@ -1151,16 +1154,19 @@ function filterZonasSucursales(tree, sortedKeysFn){
 // ---- thead dinamico de la tabla Funnel: se reconstruye en cada render()
 // segun los canales activos en state.canales (filtro Canal), asi los
 // colspan/headers siempre calzan con las celdas de datos generadas mas abajo. ----
+// columnas por canal: Oportunidad, Cotizacion, Venta, [ratio Cot/..., salvo ASC], % Cierre, % MS Cot, % MS Venta
+function funnelChanCols(c){ return c.hasCantidad ? (c.hideRatio ? 6 : 7) : 4; }
+
 function renderFunnelHead(){
   const activos = FUNNEL_CHANNELS.filter(c => isCanalActive(c.key));
   let groupRow = `<th class="zona-head" rowspan="2">Zona / Sucursal</th>`;
   let metricRow = '';
   activos.forEach(c => {
-    groupRow += `<th colspan="${c.hasCantidad ? 6 : 3}" class="${c.cls} grp-b-${c.key}">${c.label}</th>`;
+    groupRow += `<th colspan="${funnelChanCols(c)}" class="${c.cls} grp-b-${c.key}">${c.label}</th>`;
     if (c.hasCantidad){
-      metricRow += `<th class="${c.cls} grp-b-${c.key}">Oportunidad</th><th class="${c.cls}">Cotización</th><th class="${c.cls}">Venta</th><th class="${c.cls}">${c.ratioLabel}</th><th class="${c.cls}">% Cierre</th><th class="${c.cls}">% MS Cot</th>`;
+      metricRow += `<th class="${c.cls} grp-b-${c.key}">Oportunidad</th><th class="${c.cls}">Cotización</th><th class="${c.cls}">Venta</th>${c.hideRatio ? '' : `<th class="${c.cls}">${c.ratioLabel}</th>`}<th class="${c.cls}">% Cierre</th><th class="${c.cls}">% MS Cot</th><th class="${c.cls}">% MS Venta</th>`;
     } else {
-      metricRow += `<th class="${c.cls} grp-b-${c.key}">Cotización</th><th class="${c.cls}">Venta</th><th class="${c.cls}">% MS Cot</th>`;
+      metricRow += `<th class="${c.cls} grp-b-${c.key}">Cotización</th><th class="${c.cls}">Venta</th><th class="${c.cls}">% MS Cot</th><th class="${c.cls}">% MS Venta</th>`;
     }
   });
   // La columna Total (suma de todos los canales) solo tiene sentido cuando no
@@ -1178,16 +1184,16 @@ function renderFunnelHead(){
 // colspan del mensaje "sin datos".
 function funnelColCount(){
   let n = 1;
-  FUNNEL_CHANNELS.forEach(c => { if (isCanalActive(c.key)) n += (c.hasCantidad ? 6 : 3); });
+  FUNNEL_CHANNELS.forEach(c => { if (isCanalActive(c.key)) n += funnelChanCols(c); });
   if (!isCanalFilterActive()) n += 5;
   return n;
 }
 
 function funnelChannelCells(c, m){
   if (c.hasCantidad){
-    return `<td class="grp-b-${c.key}">${fmtInt(m[c.cField])}</td><td>${fmtInt(m[c.qField])}</td><td>${fmtInt(m[c.nField])}</td><td>${fmtPct(m[c.ratioField])}</td><td>${fmtPct(m[c.cierreField])}</td><td>${fmtPct(m[c.msField])}</td>`;
+    return `<td class="grp-b-${c.key}">${fmtInt(m[c.cField])}</td><td>${fmtInt(m[c.qField])}</td><td>${fmtInt(m[c.nField])}</td>${c.hideRatio ? '' : `<td>${fmtPct(m[c.ratioField])}</td>`}<td>${fmtPct(m[c.cierreField])}</td><td>${fmtPct(m[c.msField])}</td><td>${fmtPct(m[c.msvField])}</td>`;
   }
-  return `<td class="grp-b-${c.key}">${fmtInt(m[c.qField])}</td><td>${fmtInt(m[c.nField])}</td><td>${fmtPct(m[c.msField])}</td>`;
+  return `<td class="grp-b-${c.key}">${fmtInt(m[c.qField])}</td><td>${fmtInt(m[c.nField])}</td><td>${fmtPct(m[c.msField])}</td><td>${fmtPct(m[c.msvField])}</td>`;
 }
 
 function funnelTotalCells(m){
