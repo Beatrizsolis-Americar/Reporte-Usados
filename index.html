@@ -326,7 +326,7 @@
     <button type="button" class="page-tab" data-tab="renov">Renovaciones</button>
   </div>
 
-  <div class="updated-at">Última actualización: <strong>17-11-2026 11:53</strong> hrs</div>
+  <div class="updated-at">Última actualización: <strong>17-11-2026 12:02</strong> hrs</div>
 
   <div id="tab-funnel-panel">
   <div class="filters">
@@ -626,7 +626,7 @@
     </div>
   </div>
 
-  <footer id="footer">Fuente: Base_Cotizaciones_Usados_Cruce.xlsx · Maestro_homologado.xlsx (Homologado Sucursal → Zona) · Actualizado: 17-11-2026 11:53</footer>
+  <footer id="footer">Fuente: Base_Cotizaciones_Usados_Cruce.xlsx · Maestro_homologado.xlsx (Homologado Sucursal → Zona) · Actualizado: 17-11-2026 12:02</footer>
 </div>
 
 <script>
@@ -828,8 +828,20 @@ function sumAgg(list){
   return out;
 }
 
+// Orden fijo de las zonas (definido por el usuario). Las zonas que no estan en
+// la lista (p.ej. Flota) van al final; las sucursales no coinciden con ningun
+// nombre de esta lista, por lo que siguen ordenadas por cotizaciones.
+const ZONA_ORDEN = ['RM - V Poniente', 'RM Oriente', 'Longitudinal', 'Concepcion', 'Temuco-Valdivia', 'Sur'];
+function zonaRank(k){
+  const norm = x => String(x).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[\s\-]+/g,'');
+  const i = ZONA_ORDEN.findIndex(z => norm(z) === norm(k));
+  return i < 0 ? ZONA_ORDEN.length : i;
+}
+
 function sortedKeys(childrenObj){
   return Object.keys(childrenObj).sort((a,b) => {
+    const ra = zonaRank(a), rb = zonaRank(b);
+    if (ra !== rb) return ra - rb;
     const ta = derive(childrenObj[a].agg).totalQ, tb = derive(childrenObj[b].agg).totalQ;
     return tb - ta || a.localeCompare(b);
   });
@@ -839,6 +851,8 @@ function sortedKeys(childrenObj){
 // tabla dedicada de la pestaña Renovaciones).
 function sortedKeysRenov(childrenObj){
   return Object.keys(childrenObj).sort((a,b) => {
+    const ra = zonaRank(a), rb = zonaRank(b);
+    if (ra !== rb) return ra - rb;
     const ta = childrenObj[a].agg.renovQ, tb = childrenObj[b].agg.renovQ;
     return tb - ta || a.localeCompare(b);
   });
